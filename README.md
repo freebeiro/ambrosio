@@ -20,10 +20,15 @@ An intelligent voice assistant for smart home control, designed to interact with
 - **Voice Recognition**: OpenAI's real-time API
 - **Wake Word Detection**: Picovoice Porcupine
 - **Smart Home Integration**: Home Assistant API
+- **Audio Processing**: PyAudio
+- **WebRTC**: aiortc
 - **Dependencies**:
-  - `websocket-client` library
-  - `picovoice` SDK
-  - OpenAI API client (`openai` library)
+  - `pvporcupine` - Wake word detection
+  - `pyaudio` - Audio input/output
+  - `aiortc` - WebRTC implementation
+  - `websockets` - Signaling server
+  - `openai` - OpenAI API integration
+  - `homeassistant-api` - Home Assistant integration
 
 ## Installation
 
@@ -135,6 +140,6 @@ python run_ambrosio.py
 
 - **Security**: Ensure that all API keys and tokens are kept secure. Do not commit the `.env` file to version control.
 - **Privacy**: The assistant should prioritize user privacy and handle all voice data responsibly.
-- **Collaboration**: Contributions are welcome. Please adhere to the coding standards and guidelines outlined in `CONTRIBUTING.md` (to be created).
-- **Documentation**: Maintain comprehensive documentation for each module to assist future developers and AI workers.
+- **Collaboration**: Contributions are welcome. Please adhere to the coding standards and guidelines outlined in [CONTRIBUTING.md](CONTRIBUTING.md).
+- **Documentation**: Maintain comprehensive documentation for each module to assist future developers and AI workers. See our [Deployment Guide](DEPLOYMENT.md) for deployment instructions.
 - **Version Control**: Regularly commit changes with clear and descriptive messages.
