@@ -2,9 +2,9 @@ import websockets
 import json
 import base64
 from tenacity import retry, stop_after_attempt, wait_exponential
-from core.interfaces import IVoiceProcessor
-
-class OpenAIVoiceProcessor(IVoiceProcessor):
+from core.interfaces import IVoiceToText, ITextToSpeech
+# Registration moved to DI configuration
+class OpenAIVoiceProcessor(IVoiceToText, ITextToSpeech):
     def __init__(self, api_key: str, system_prompt: str):
         self.headers = {"Authorization": f"Bearer {api_key}", "OpenAI-Beta": "realtime=v1"}
         self.system_prompt = system_prompt

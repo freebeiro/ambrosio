@@ -1,8 +1,13 @@
 from typing import Protocol, Dict, Any, Coroutine
 
-class IVoiceProcessor(Protocol):
+class IVoiceToText(Protocol):
     async def process_audio(self, audio: bytes) -> Dict[str, Any]: ...
-    async def text_to_speech(self, text: str) -> bytes: ...
+
+class ITextToSpeech(Protocol):
+    async def synthesize(self, text: str) -> bytes: ...
+
+class IVoiceProcessor(IVoiceToText, ITextToSpeech):
+    """Composite interface for voice processing"""
 
 class IWakeWordDetector(Protocol):
     async def detect(self) -> Coroutine[None, None, None]: ...
