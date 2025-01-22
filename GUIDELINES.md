@@ -1,81 +1,81 @@
-Guidelines
-SOLID Compliance
-Single Responsibility: No component handles more than one task.
+# Ambrosio Development Guidelines
 
-Open/Closed: New tools are added via /integrations without modifying existing code.
+## Development Standards
+### SOLID Principles
+- **Single Responsibility**: Each component handles one specific task
+- **Open/Closed**: Extend functionality through new integrations
+- **Liskov Substitution**: Components implement clear interfaces
+- **Interface Segregation**: Focused, minimal interfaces
+- **Dependency Inversion**: Depend on abstractions, not concretions
 
-Dependency Inversion: All components depend on interfaces, not concrete classes.
+### Error Handling
+- Retry transient errors (e.g., OpenAI API calls)
+- Validate all inputs (e.g., Home Assistant entity IDs)
+- Log errors with context using ProductionLogger
+- Implement circuit breakers for external services
 
-Error Handling
-Retry transient errors (e.g., OpenAI API calls).
+### Logging Implementation
+- Uses dependency injection through ILogger interface
+- ProductionLogger provides:
+  - Info: System status and normal operations
+  - Debug: Detailed technical information
+  - Error: Critical failures and exceptions
+- Configurable log levels and file rotation
 
-Validate all inputs (e.g., Home Assistant entity IDs).
+## Testing Requirements
+### Core Functionality
+- **Wake Word Detection**:
+  - Test with 10+ voice samples
+  - Validate different noise levels
+  - Measure detection latency (<500ms)
 
-Log errors with context using ProductionLogger.
+- **Audio I/O**:
+  - Validate on macOS and Raspberry Pi
+  - Test microphone/speaker compatibility
+  - Verify audio quality metrics
 
-Testing
-Wake Word Detection: Test with 10+ voice samples.
+- **Home Assistant Integration**:
+  - Ensure command execution within 500ms
+  - Validate entity discovery
+  - Maintain 100% success rate for valid commands
 
-Audio I/O: Validate on macOS and Raspberry Pi.
+## Documentation
+- Add inline comments for complex logic
+- Document new voice provider integration process
+- Maintain API reference documentation
+- Keep architecture diagrams updated
+- Use consistent Markdown formatting
 
-Home Assistant: Ensure commands execute within 500ms.
+## Implementation Checklist
+- [ ] Verify .env configuration matches template
+- [ ] Test core components individually:
+  ```bash
+  # Test wake word detection
+  python3 -c "from integrations.wake_word.porcupine import PorcupineWakeWordDetector; detector = PorcupineWakeWordDetector('dummy_key', 'dummy.ppn')"
+  
+  # Test OpenAI integration
+  python3 -c "from integrations.voice_processing.openai_realtime import OpenAIVoiceProcessor; processor = OpenAIVoiceProcessor('dummy_key', 'dummy_prompt')"
+  ```
+- [ ] Validate integration points
+- [ ] Confirm logging works across all components
+- [ ] Ensure error handling covers all scenarios
 
-Documentation
-Add inline comments explaining complex logic.
+## Deliverables
+- Fully functional Python implementation
+- Validation report containing:
+  - Wake word detection accuracy metrics
+  - OpenAI response latency measurements
+  - Home Assistant command success rates
+  - Audio I/O performance statistics
 
-Document how to add new voice providers in /integrations.
+# Why Markdown?
+1. **Readability**: Clear structure with headings and lists  
+2. **Portability**: Viewable in any editor or browser  
+3. **Maintainability**: Easy to update and version control  
+4. **AI Compatibility**: Optimal format for LLM processing
 
-Deliverables
-Fully functional Python implementation matching the provided structure.
-
-Validation report confirming:
-
-Wake word detection accuracy.
-
-OpenAI response latency (<1.5s).
-
-Home Assistant command success rate (100% for valid commands).
-
-Instructions for AI Worker
-Implement Exactly As Provided:
-
-Copy all code files verbatim.
-
-Maintain directory structure.
-
-Validate Configuration:
-
-Ensure .env matches the template.
-
-Test with python3 -c "from config.settings import Settings; Settings()".
-
-Test Components Individually:
-
-bash
-Copy
-# Test wake word detection
-python3 -c "from integrations.wake_word.porcupine import PorcupineWakeWordDetector; detector = PorcupineWakeWordDetector('dummy_key', 'dummy.ppn')"
-
-# Test OpenAI integration
-python3 -c "from integrations.voice_processing.openai_realtime import OpenAIVoiceProcessor; processor = OpenAIVoiceProcessor('dummy_key', 'dummy_prompt')"
-Reply with "ACKNOWLEDGED" to confirm understanding, then begin implementation.
-Ask for clarification if any part of the code/instructions is unclear.
-
-Copy
-
----
-
-### **Why Markdown?**
-1. **Readability**: Clear headings, code blocks, and lists make it easy to follow.  
-2. **Portability**: Can be viewed in any text editor or rendered in tools like GitHub.  
-3. **AI-Friendly**: Most AI tools parse Markdown effectively.  
-
----
-
-### **How to Use**
-1. Save the above content as `ambrosio_implementation.md`.  
-2. Provide the file to the AI worker with the following instructions:  
-   ```text
-   Read the instructions in `ambrosio_implementation.md` carefully.  
-   Implement the project exactly as described.  
-   Ask for clarification if anything is unclear.  
+# Usage Instructions
+1. Save this document as `GUIDELINES.md`
+2. Follow the implementation checklist rigorously
+3. Refer to testing requirements before deployment
+4. Update documentation with any changes
