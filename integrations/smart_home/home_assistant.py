@@ -1,6 +1,14 @@
 from homeassistant_api import Client, HomeassistantAPIError
 from core.interfaces import ISmartHomeController
 
+class ServiceMapper:
+    """Maps Portuguese voice commands to Home Assistant services"""
+    _mappings = {
+        "ligar": "turn_on",
+        "desligar": "turn_off",
+        "ajustar": "set_temperature"
+    }
+
 class HomeAssistantController(ISmartHomeController):
     def __init__(self, url: str, token: str):
         self.client = Client(url, token)
@@ -19,8 +27,4 @@ class HomeAssistantController(ISmartHomeController):
             raise RuntimeError(f"Home Assistant error: {e}")
 
     def _map_service(self, action: str) -> str:
-        return {
-            "ligar": "turn_on",
-            "desligar": "turn_off",
-            "ajustar": "set_temperature"
-        }[action]
+        return ServiceMapper._mappings[action]
