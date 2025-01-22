@@ -3,18 +3,30 @@ import json
 import base64
 from tenacity import retry, stop_after_attempt, wait_exponential
 from core.interfaces import IVoiceToText, ITextToSpeech
+from integrations.smart_home.home_assistant import HomeAssistantController
 # Registration moved to DI configuration
 class OpenAIVoiceProcessor(IVoiceToText, ITextToSpeech):
-    def __init__(self, api_key: str, system_prompt: str):
+    def __init__(self, api_key: str, system_prompt: str, smart_home_controller: HomeAssistantController):
         self.headers = {"Authorization": f"Bearer {api_key}", "OpenAI-Beta": "realtime=v1"}
         self.system_prompt = system_prompt
+        self.smart_home_controller = smart_home_controller
 
     @retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=1, max=10))
     async def process_audio(self, audio: bytes) -> dict:
         async with websockets.connect("wss://api.openai.com/v1/realtime", extra_headers=self.headers) as ws:
             await self._configure_session(ws)
             await self._send_audio(ws, audio)
-            return await self._receive_response(ws)
+            response = await self._receive_response(ws)
+            
+            # Handle device listing command
+            if "listar dispositivos disponíveis" in response.get("text", "").lower():
+                devices = self.smart_home_controller.list_devices()
+                response["text"] = "Dispositivos disponíveis:\n" + "\n".join(
+                    f"- {d['name']} ({d['type']}): {d['state']}"
+                    for d in devices
+                )
+            
+            return response
 
     async def text_to_speech(self, text: str) -> bytes:
         return b"dummy_audio_data"

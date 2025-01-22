@@ -30,18 +30,25 @@ def initialize_components(settings: Settings):
     if not voice_cls:
         raise ValueError(f"Unsupported provider: {settings.VOICE_PROVIDER}")
 
+    # Initialize smart home controller first
+    smart_home = HomeAssistantController(
+        settings.HOME_ASSISTANT_URL,
+        settings.HOME_ASSISTANT_TOKEN
+    )
+    
+    # Create voice processor with smart home dependency
+    voice_processor = voice_cls(
+        settings.OPENAI_API_KEY,
+        open("config/system_prompt.txt").read(),
+        smart_home_controller=smart_home
+    )
+    
     return {
-        "voice_processor": voice_cls(
-            settings.OPENAI_API_KEY,
-            open("config/system_prompt.txt").read()
-        ),
+        "voice_processor": voice_processor,
         "wake_word_detector": PorcupineWakeWordDetector(
             settings.PICOVOICE_ACCESS_KEY,
             settings.WAKE_WORD_PATH,
             logger=ProductionLogger()
         ),
-        "smart_home": HomeAssistantController(
-            settings.HOME_ASSISTANT_URL,
-            settings.HOME_ASSISTANT_TOKEN
-        )
+        "smart_home": smart_home
     }
